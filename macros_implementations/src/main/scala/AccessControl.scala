@@ -23,7 +23,6 @@ object AccessControl {
             println(result)
             result
           }"""
-          co
         }
         case _ => c.abort(c.enclosingPosition, "Annotation @AccessControl can be used only with methods")
       }
