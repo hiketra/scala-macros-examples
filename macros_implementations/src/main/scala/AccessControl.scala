@@ -2,7 +2,7 @@ import scala.annotation.{StaticAnnotation, tailrec}
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox.Context
 
-class AccessControl extends StaticAnnotation {
+class AccessControl(role: String) extends StaticAnnotation {
   def macroTransform(annottees: Any*) = macro AccessControl.impl
 }
 
@@ -16,12 +16,14 @@ object AccessControl {
           annottees.map(_.tree).toList
           q"""$mods def $methodName[..$tparams](...$paramss): $returnType =  {
             val result = {..$body} + 1
-            if(!context.role == "Admin" || context.customerId < 1000) {
-              throw new Exception("Authorization Exception!")
+            if((context.role != "Admin") && (param1 > 3000)) {
+              throw new Exception("Authorization Exception!" + context.role +
+               " users can not make payments of" + param1 + "amount!")
             }
             println(result)
             result
           }"""
+          co
         }
         case _ => c.abort(c.enclosingPosition, "Annotation @AccessControl can be used only with methods")
       }
